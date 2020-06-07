@@ -1,0 +1,290 @@
+1)  a) RO := R1
+
+b) 
+ALU_IN1 := R0
+ALU_IN2 := R1
+ALU_add
+R0 = ALU_OUT
+Z = ALU_Z
+N = ALU_IN1
+V = ALU_V
+C = ALU_C
+
+c)
+ALU_IN1 := R0
+ALU_IN2 := R1
+ALU_and
+R0 = ALU_OUT
+*flags
+
+d) 
+ALU_IN1 = R0
+ALU_not
+R0 = ALU_OUT
+*flags
+
+e) 
+ALU_IN1 = R0
+ALU_neg
+R0 = ALU_OUT
+*flags
+
+2)a)i
+IR0 = 0001100000100001 : 0x1821
+IR1 = 
+IR2 = 
+ii
+IR0 = 0001 1000 0000 0000 : 0x1820
+IR1 = 1111111100000000 : 0xFF00
+IR2 = 
+iii
+IR0 = 0001 0010 0000 0000 : 0x1200
+IR1 = 0xAA00
+IR2 = 0xFF00
+iv
+IR0 = 0001 0010 0001 1000 : 0x1218
+IR1 = 0xAA00
+IR2 = 0xFF00
+v
+IR0 = 0001 0010 0011 0000 : 0x1230
+IR1 = 0xAA00
+IR2 = 
+vi
+IR0 = 0001 0010 0011 1000 : 0x1230
+IR1 = 0xAA00
+IR2 = 0xFF00
+
+b) i R0 = R1
+ii
+R0 = IR1
+iii
+MAR = IR1
+MDR = IR2
+MEM_WRITE
+iv
+MAR = IR2
+MEM_READ
+R0 = MDR
+MAR = R0
+MEM_READ
+MAR = IR1
+MEM_WRITE
+v
+MAR = R0
+MEM_READ
+MAR = IR1
+MEM_WRITE
+vi
+ALU_IN1 = R0
+ALU_IN2 = IR2
+ALU_add
+R1 = ALU_OUT
+MAR = R1
+MEM_READ
+MAR = IR1
+MEM_WRITE
+
+3) PC = R0
+
+if Z = 1:
+   EXT_IN = IR0[7:0]
+   SIGN_EXT_off
+   ALU_IN1 = PC
+   ALU_add
+   PC = ALU_OUT
+endif
+
+if Z = 0
+    EXT_IN = IR0[7:0]
+    SIGN_EXT_off
+    ALU_IN1 = PC
+    ALU_add
+    PC = ALU_OUT
+else if N = 1
+    if V = 0
+    EXT_IN = IR0[7:0]
+    SIGN_EXT_off
+    ALU_IN1 = PC
+    ALU_add
+    PC = ALU_OUT
+else if V = 1
+    if N = 0    
+    EXT_IN = IR0[7:0]
+    SIGN_EXT_off
+    ALU_IN1 = PC
+    ALU_add
+    PC = ALU_OUT
+endif
+
+MAR = SP
+MDR = PC
+MEM_WRITE
+ALU_IN1 = SP
+ALU_IN2 = 0x0001
+ALU_sub
+SP = ALU_OUT
+PC = R0
+
+ALU_IN1 = SP
+ALU_IN2 = 0x0001
+ALU_add
+MAR = ALU_OUT
+MEM_READ
+PC = MDR
+SP = ALU_OUT
+
+4) a) en cuaderno (preguntar si se puede hacer sin extender de ninguna forma solo sumando a si mismo en la alu)
+b) 
+LS_IN = R1
+LEFT_SHIFT
+R1 = LS_OUT
+C = FLAG
+V = FLAG
+
+c) Podemos hacer que el registro 1 sea el registro de entrada y salida del leftshift ahorrandonos operaciones al queres hacer un LEFT_SHIFT
+
+5) a) 1)
+MAR = PC
+MEM_READ
+IR0 = MDR
+ALU_IN1 = PC
+ALU_IN2 = 0x0001
+ALU_add
+PC = ALU_OUT 
+
+b) 
+MAR = PC
+MEM_READ
+IR0 = MDR
+ALU_IN1 = PC
+ALU_IN2 = 0x0001
+ALU_add
+PC = ALU_OUT 
+MAR = PC
+MEM_READ
+if IR0[11] = 0
+    if IR0[9] = 0
+        IR1 = MDR
+    else
+        MAR = MDR
+        MEM_READ
+        if IR0[9] = 1
+            IR1 = MDR
+        endif
+        if IR0[10] = 1
+            MAR = MDR
+            MEM_READ
+            IR1 = MDR
+        endif
+    endif
+endif
+if IR0[11] = 1
+    if IR0[10] = 1
+        if IR0[9] = 1
+            //mil ifs para elegir el registro
+            ALU_IN1 = Rrr
+            ALU_IN2 = MDR
+            ALU_add
+            MAR = ALU_OUT
+            MEM_READ
+            IR1 = MDR
+        endif
+    endif
+endif
+
+6a) en cuaderno
+b)
+MAR = IR[11:0]
+MEM_READ
+AC = MDR
+
+MAR = IR[11:0]
+MEM_READ
+ALU_IN1 = AC
+ALU_IN2 = MDR
+ALU_add
+AC = ALU_OUT
+
+PC = IR[11:0]
+
+ALU_IN1 = AC
+ALU_IN2 = AC
+ALU_sub
+ALU_IN2 = ALU_OUT
+ALU_sub
+-- estoy restando ac consigo mismo para lograr tener en in2 un 0 y poder operar y fijarme los flags para ac. No se si esta bien, cubawiki 
+if IR[11] = 1
+    if Z = 1
+        INC_IN = PC
+        INC_1
+        PC = INC_EXT
+    endif
+    if N = 0
+        INC_IN = PC
+        INC_1
+        PC = INC_EXT
+    endif
+if IR[10] = 0
+    if N = 1
+        INC_IN = PC
+        INC_1
+        PC = INC_EXT
+    endif
+    if Z = 1
+        INC_IN = PC
+        INC_1
+        PC = INC_EXT
+    endif
+endif   
+
+7) 
+MAR = PC
+MEM_READ
+IR = MDR
+INC_IN = PC
+INC_1
+PC = INC_EXT
+
+8) a) no entiendo nada
+
+b)
+ALU_i1 = R0
+inv_in = R1
+not
+xor
+R2 = alu_out
+
+c) 
+MAR = PC
+MEM_READ
+IR1 = MDR
+No creo que sea solo esto
+
+9a)
+ADD dir1, dir2:
+MEM ADDR = IR[6:0]
+mem read
+B = MEM DATA[7:0] // Porque? creo que pq las pos de memoria son de 8 mientras que mem data es de 16 
+MEM ADDR = IR[13:7]
+mem read
+A = MEM DATA[7:0] // Porque?
+alu add
+MEM DATA = R
+mem write
+ZF = Z
+
+ai)
+if ZF = 1
+    PC = IR[13:7]
+endif
+
+b)
+MEM_ADDR = PC
+MEM_READ
+IR = MEM_DATA 
+ADDER_inc
+PC = AUX
+ADDER_inc
+PC = AUX 
+PQ?? Creo que pq las posiciones de memoria son de 8, entonces avanza de a 2 ya que las instrucciones son de 16
+

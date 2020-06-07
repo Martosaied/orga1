@@ -1,0 +1,76 @@
+
+Pseudocodigo pendiente
+
+
+main:       CMP R1, 0x0000
+            JE fin
+leftShift   ADD R0, R0
+            SUB R1, 0x0001
+            JE fin
+            JMP leftShift
+fin         RET
+
+c) Ningun otro cambia, no es necesario hacer cambios en el codigo
+
+2) 
+func maximoMinimo(vector)
+maximo = 0
+minimo = 0
+longitud = longitud(vector)
+i = 0
+while i < longitud do
+    if vector[i] < minimo
+        minimo = vector[i]
+    else if vector[i] > maximo 
+        maximo = vector[i]
+    i++
+fi while
+
+main:   MOV R2, 0x0000
+        MOV R3, 0x0000
+ciclo:  CMP R1, 0x0000
+        JE fin
+        CMP [R0], R2
+        JL setMin
+        CMP [R0], R3
+        JG setMax
+        ADD R0, 0x0001  
+        SUB R1, 0x0001
+        JMP ciclo
+setMin: MOV R2, R0
+        JMP ciclo
+setMax: MOV R3, R0
+        JMP ciclo
+fin:    RET
+
+
+3)
+main:       MOV R4 0x0000
+            ADD [R0] [R1]
+            MOV [R2] [R0]
+            JCS conFlag1
+            MOV [R2] [R0]
+            JCS conFlag1
+    ADDC [R0 + 0x0001] [R1+0x0001]
+    ADDC [R0 + R4] [R1+0x0001]
+
+4) 
+        MOV R4, 0x0000 
+sumar:  CMP R4, R0
+        JE fin
+        CALL [R3], [R1 + R4]
+        ADD R4, 0x0001
+
+        //NOBUEN DSP SEGUIMOS
+
+5)      MOV R0, 0x0002
+        MOV R1, 0x0020
+        ADD R0, R1
+
+6) EZ
+
+7) a) 20, b) 0040h c) 0060h d) 0030h e) 0050h f) 0070h
+
+8)      valor   0xFF10
+        inicio  0xFF11
+        salida  0xFF17

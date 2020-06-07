@@ -1,0 +1,16 @@
+Se pide que C( el flag del carry) sea = 1 si y solo si, se produce borrow. lo cual ocurre cuando b > a en representacion sin signo(?). 
+Podemos ver que dadp el carry del sumador utilizado en nuestro restador, el borrow se produce cuando el carry de la suma es igual a 0.
+Esto se ve dado que -b es representado como 2**4-b en sin signo. Es decir -b es el numero que debo sumar a B para obtener 2**4
+que seria representado como C = 1 y 0000
+
+So A > B, cuando hago A-B = A+(-B) = A+2**4-B, se puede decir que esto es >= 2**4 pues A>B y como la cadena es de 4bits, hay acarreo. --> No hay borrow
+Sin embargo, si A < B, A-B = A+(-B) = A+2**4-B y se puede decir que < 2**4 pues A<B. y no hay acarreo --> Borrow
+Pero debemos exceptuar el caso de B=0 donde, A+2**4-B = A+2**4 > 2**4 y hay acarreo
+
+
+Como el inverso aditivo de 0 es 0
+y ninguna suma con 0 da carry
+Martin Saied: el negar el carry para dar borrow en este caso me diria que en A-0 hay borrow(pq 0 es su inv. adit) entonces separo ese caso y desactivo el borrow cuando B = 0
+
+Overflow sin signo = carry out
+Overflow con signo = superposicion con signo
