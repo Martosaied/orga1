@@ -1,0 +1,51 @@
+Se pide que:
+1. Enumere los registros de entrada y salida de los dispositivos especificando su tipo (escritura, lectura o lectoescritura).
+SENSOR(L) ↦ 0xFFF0
+LUZ(E) ↦ 0xFFF1
+
+
+2. Escriba el pseudocodigo de la rutina de atencion de interrupciones y la principal.
+Estados:
+    HAY_ALGO
+    NO_HAY_NADA
+Pseudocodigo rutina de atencio a la interrupcion
+ESTADO = HAY_ALGO
+R2++
+
+Pseudocodigo de la rutina principal
+ESTADO = NO_HAY_NADA
+while(true) {
+    if (ESTADO == NO_HAY_NADA) {
+        LUZ = APAGADA
+    } else if (ESTADO == HAY_ALGO) {
+        LUZ = PRENDER
+        if (SENSOR > 15) {
+            ESTADO = NO_HAY_NADA
+            R2++
+        }
+    }
+}
+
+3. Utilizando el assembler de la maquina ORGA1i, implemente el pseudocodigo del punto 2.B
+MAIN
+; R1 --> ESTADO: 0x0000 (NO_HAY_NADA)
+; 0x0000 (NO_HAY_NADA), 0x0001(HAY_ALGO)
+            MOV R1, 0x0000
+inicio:     CMP R1, 0x0000       ; ¿noHayNada?
+            JE noHayNada         
+            CMP R1, 0x0001       ; ¿hayAlgo?
+            JE hayAlgo
+            JMP fin
+noHayNada:  MOV [0xFFF1], 0x0000 ; LUZ
+            JMP fin
+hayAlgo:    MOV [0xFFF1], 0xAAAA ; LUZ
+            CMP [0xFFF0], 0x000F ; SENSOR
+            ADD R2, 0x0001       ; cambio estado luz
+            MOV R1, 0x0001       ; Cambio de estado a noHayNada
+            JMP fin
+fin:        JMP inicio
+
+RUTINA DE ATENCION DE INTERRUPCIONES
+rut_ate_int:    MOV R1, 0x0001 ; cambiamos el estado a hayAlgo
+                ADD R2, 0x0001 ; cambio estado luz
+                IRET

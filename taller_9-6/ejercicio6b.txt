@@ -1,0 +1,5 @@
+    |00| SET R0 , 0xF8
+    |02| SET R1 , 0x00
+    |04| ADD R0 , R1
+    |06| NEG R0
+fin |08| JMP fin

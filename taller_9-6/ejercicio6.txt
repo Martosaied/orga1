@@ -1,0 +1,3 @@
+          |00| SET R0 , 0xFF
+siguiente |02| SIG R0
+      fin |04| JMP fin

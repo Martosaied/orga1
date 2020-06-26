@@ -10,6 +10,9 @@
 #06 XOR  00110 XXXYYY-----
 #07 CMP  00111 XXXYYY-----
 #08 MOV  01000 XXXYYY-----
+#09 SIG  01001 XXX--------
+#10 NEG  01010 XXX--------
+#11 MIX  01011 XXXYYY-----
 
 #16 STR  10000 XXXMMMMMMMM
 #17 LOAD 10001 XXXMMMMMMMM
@@ -80,15 +83,15 @@ def tokenizator(filename):
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Assembly code constants
 
-type_RR = ["ADD","ADC","SUB","AND","OR" ,"XOR","CMP","MOV"]
+type_RR = ["ADD","ADC","SUB","AND","OR" ,"XOR","CMP","MOV","MIX"]
 type_RM = ["STR","LOAD"]
 type_M  = ["JMP","JC","JZ","JN"]
-type_R  = ["INC","DEC"]
+type_R  = ["INC","DEC","SIG","NEG"]
 type_RS = ["SHR","SHL"]
 type_RI = ["SET"]
 def_DB  = ["DB"]
 
-opcodes = {"ADD" : 1, "ADC" : 2, "SUB" : 3, "AND"  : 4, "OR"  : 5, "XOR" : 6, "CMP" : 7, "MOV" : 8,
+opcodes = {"ADD" : 1, "ADC" : 2, "SUB" : 3, "AND"  : 4, "OR"  : 5, "XOR" : 6, "CMP" : 7, "MOV" : 8,"SIG": 9,"NEG": 10,"MIX": 11,
            "STR" :16, "LOAD":17, "STRr":18, "LOADr":19,
            "JMP" :20, "JC"  :21, "JZ"  :22, "JN"   :23,
            "INC" :24, "DEC" :25, "SHR" :26, "SHL"  :27, "SET" :31}
@@ -339,7 +342,7 @@ ALUops={ "RESERVED0"  : 0,
          "SHR"        : 8, 
          "SHL"        : 9, 
          "RESERVED10" : 10, 
-         "RESERVED11" : 11, 
+         "MIX"        : 11, 
          "cte0x00"    : 12,
          "cte0x01"    : 13,
          "cte0x02"    : 14,
