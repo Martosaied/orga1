@@ -1,0 +1,30 @@
+-- Parcial -- 
+https://www.cubawiki.com.ar/images/f/f2/Orga1_parcial_1cuatri2017_resuelto.pdf
+----
+
+-- Ejecicio 1 --
+Hay varias formas, ua puede ser usando LUI y luego SLI para shfitear o, SUBI y luego OR
+por ejemplo
+Quiero cargar 0x22223333 en R1
+
+SUBI R1, R2, R2 --> voy a tener 0x00000000 en R1
+OR R1, R1, 0x22223333 --> voy a tener 0x22223333 en R1
+
+-- Ejercicio 1b --
+Primera palabra
+Tendria 5 bits para indicar el codigo de operacion(las instruccion que son iguales pero tienen distintos paramertros tendran diferente codigo de operacion)
+Existirian 5 tipos de formato
+Para todos menos para el formato de tipo E (solo un registro)
+Tipos A(3 registros) -> los siguientes 20 bits son para indicar registros, el resto son 0s
+TIpos B(2 registros, 1 cte) -> 10 bits para registros un 0, y toda la segunda palabra para cte
+Tipos C Registros, (cte)registro
+Tipos D 5 para registro, todo 0 y segunda palabra para constante
+
+Esta mal pero nose pq
+[DUDA]
+
+-- Ejercicio 1c --
+2^32*2^3 = 2^35 = ESTA MAL?[DUDA]
+
+
+

@@ -1,0 +1,202 @@
+-- Ejercicio 1 --
+sensar: CMP [0xFFF0], MAX_TEMP ;¿se alcanz´o la temperatura m´axima?
+        JG alarma
+        CMP [0xFFF1], MAX_ATM ;¿se alcanz´o la presi´on atmosf´erica m´axima?
+        JG alarma
+        CMP [0xFFF2], MAX_WIND_SPEED ;¿se alcanz´o la velocidad m´axima?
+        JG alarma
+        JMP sensar
+alarma: CALL sonarAlarma ;invocar la rutina de la alarma
+        JMP sensar
+
+TEMP_STATUS = 0xFFF0
+ATM_STATUS = 0xFFF1
+WIND_SPEED = 0xFFF2
+
+1/7*t
+
+sensar: CMP [0xFFF1], MAX_ATM ;¿se alcanz´o la presi´on atmosf´erica m´axima?
+        JG alarma
+        CMP [0xFFF2], MAX_WIND_SPEED ;¿se alcanz´o la velocidad m´axima?
+        JG alarma
+        JMP sensar
+alarma: CALL sonarAlarma ;invocar la rutina de la alarma
+        JMP sensar
+nueva frecuencia de muestro = 1/5*t
+
+rutina AI
+CALL sonarAlarma
+
+-- Ejercicio 2 --
+No ya que como se llama a RET y no IRET los flags no vuelven a sus valores antes de ocurrir la interrupcion por lo que el salto JVS no tendria lugar con los verdaderos 
+valores de R0 y R1
+
+El cambio que haria seria cambiar RET por IRET
+
+
+-- Ejercicio 3 --
+
+while (true) {
+    Fetch() // fetch
+    Decode() // decodificaci´on
+    Execute() // ejecuci´on
+    if I==1 AND INTR==1 {
+        PUSH PSW // [SP] = PSW and SP--
+		PUSH PC // [SP] = PC and SP--
+		CLI
+		PC = [0x0000]
+		INTA()
+    }
+}
+
+-- Ejercicio 4 --
+
+lectura: 	CMP [0xFFF0], 0x0000
+			JNEG hayValido
+			JMP lectura
+hayValido:	MOV R2, 0xFFF0
+			AND R2, 0x00FF
+			MOV [R1], R2
+			SUB R0, 0x0001
+			ADD R1, 0x0001
+			CMP R0, 0x0000
+			JE fin
+			JMP lectura
+fin:		RET
+
+-- Ejercicio 5 --
+
+esperandoPresione: 	CMP [0xFFF0], 0xFFFF
+					JE esperandoSuelte
+					JMP esperandoPresione
+esperandoSuelte:	CMP [0xFFF0], 0x0000
+					JE esperandoSuelte
+					JMP sumar
+sumar:				ADD [0xFFF1], 0x0001
+					JMP esperandoPresione
+
+-- Ejercicio 6 --
+a- En este orden: 
+PAC
+ALTURA
+COMBUSTIBLE
+GPS
+Es decir de mayor prioridad a menor
+
+b- 0x0F -> Porque solo queremos permitir que interrupan al procesador los dispositivos conectados del 1 al 4, es decir los primeros 4 bits en 1, osea F
+c- es un vector que comienza en la posicion 0x0000 y mapea numero de interrupcion con direccion de rutina
+0x0000 -> 0xFF00
+0x0001 -> 0xA000
+0x0002 -> 0xFE00
+0x0003 -> 0x01FF
+
+d- 0x0005
+
+e- RAI_MONITOR_ALTURA:
+; Guardar la mascara
+PUSH AX ; apilar el registro AX
+IN AX, IMR ; copiar el contenido del reg. de E/S IMR en AX
+PUSH AX ; apilar la mascara actual
+
+; Setear la mascara inhibiendo interrupciones de menor prioridad
+MOV AX , .... (completar)
+OUT IMR, AX ; copiar el contenido de AX en el reg. de E/S INTMASK
+STI
+; Salvar el estado de lo que reste
+
+
+; Obtener la altura nueva
+IN AX, 43h ; copiar el contenido del reg. 43h de E/S en AX
+LEA SI, MONITOR_ALTURA ; copiar la constante MONITOR_ALTURA en el reg. SI
+MOV [SI], AX ; copiar el contenido del registro AX en la
+; direcci´on apuntada por el reg. SI
+; La altura ya fue actualizada, completar lo que falta para terminar
+
+-- Ejercicio 7 --
+Si la interrupcion pertenece a HP, y HIF esta activado, se deja activado y se apaga LIF
+Si la interrupcion pertenece a LP, y LIF esta activado, se dejan activados ambos
+
+if (IFH == 1 or IFL == 1) {
+	PUSH PSW
+	PUSH PC
+	CLEAR HIF
+	CLEAR LIF
+	if (IFH == 1) {
+		PC = [0x0000]
+		INTA()
+	} else {
+		SET HIF
+		PC = [0x0001]
+		INTA()
+	}
+}
+
+Agregar instrucciones para setear y desetear los flags para indicar si las interrupciones de alta/baja prioridad pueden interrumpir
+
+Reloj del sistema
+Teclado
+Puerto Serial
+Disco Flexible
+Disco Rigido
+Impresora
+
+-- Ejercicio 9 --
+En main setearia un registro en 0 antes de comenzar el loop, y en la rutina de instruccion haria:
+
+		ADD Ri, 0x0001
+		CMP Ri, 0x0090
+		JE reset
+fin:	IRET
+reset: 	MOV Ri, 0x0000
+		JMP fin 
+
+ESTADOS
+	BARRERA_ARRIBA → 0x0001
+	BARRERA_ABAJO → 0x0002
+	BARRERA_ABAJO_OFF → 0x0003
+Registro de estados = R4
+
+ESTADO = BARRERA_ABAJO
+Hora = 0
+while(true) {
+	if (ESTADO ≠ BARRERA_ABAJO_OFF) {
+		if (Hora < 72) {
+			if (ESTADO = BARRERA_ABAJO and BUTTON_DATA = 1) {
+				ESTADO = BARRERA_ARRIBA
+			}
+			if (ESTADO = BARRERA_ARRIBA and SENSOR_DATA = 0) {
+				ESTADO = BARRERA_ABAJO
+			}
+		} else {
+			ESTADO = BARRERA_ABAJO_OFF
+		}
+	} else {
+		if (Hora = 144) {
+			ESTADO = BARRERA_ABAJO
+			Hora = 0
+		}		
+	}
+}
+
+main: 			MOV R4, 0x0002
+				MOV R3, 0x0000
+ciclo:			ADD R3, 0x0001
+				CMP R4, 0x0003
+				JNE abrimos?
+				CMP R3, 0x0048
+				JE	cerrarCochera
+				MOV R5, R4
+				AND R5, [0xFFF0]
+				JG	barreraArriba
+				MOV R5, R4
+				AND R5, [0xFFF1]
+				JG barreraAbajo
+				JMP ciclo
+barreraAbajo: 	MOV R4, 0x0003
+
+lo sigo dsp
+
+
+					
+
+

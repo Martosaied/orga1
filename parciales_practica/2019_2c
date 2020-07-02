@@ -1,0 +1,15 @@
+-- Parcial --
+https://www.cubawiki.com.ar/images/a/ac/Orga1_parcial_2doCuatri2019tm.pdf
+----
+
+-- Ejercicio 1a --
+PC de 12 bits
+AC de 12 bits
+Tamaño maximo de memoria Direccionamiento * 2^|bus|
+Cantidad de pos de memoria 2^12
+
+-- Ejercicio 1b --
+Sin alterar el formato 4 mas
+Alterandolo serian 5*(2^8)-1 --> ese uno es por el opcode halt pero podemos boludear con el resto de las permutaciones
+
+-- Ejercicio 1c --
