@@ -1,0 +1,88 @@
+-- Parcial --
+https://www.cubawiki.com.ar/images/2/2c/Orga1_parcial_1erCuatri2019.pdf
+----
+
+-- Ejercicio 3 --
+POTENCIA_VALOR(L) = 0xFFF0
+POTENCIA_ST(E) = 0xFFF1
+LED_ST(E) = 0xFFF2
+MAX_POTENCIA(L) = 0xFFF3
+
+Rutina de Control
+while(true) {
+    if (POTENCIA_VALOR > MAX_POTENCIA) {
+        POTENCIA_ST = 0xAD10
+    }
+    if (POTENCIA_VALOR > 0) {
+        R1++
+    }
+}
+
+RAI
+LED_ST = 0xFFFF
+R2++
+
+        MOV R3, [0xFFF3]
+ciclo   CMP [0xFFF0], R3
+        JL  suma
+        MOV [0xFFF1], 0xAD10
+suma    ADD R1, 0x0001
+        JMP ciclo
+
+RAI
+MOV [0xFFF2], 0xFFFF
+ADD R2, 0x0001
+
+-- Ejercicio 1 --
+PC de 4 bits de tamaño
+2^8*4 bits de tamaño maximo de memoria
+2*2^5 instrucciones sin operandos
+0x29 = 00101001 valido
+0x92 = 10010010 invalido
+0x60 = 01100000 
+
+inicio: LD 0x2 -- 0x2
+        MOV R1, R0 -- 0x3
+        LD 0x3 -- 0x4
+        ADD R0, R1 -- 0x5
+        JL fin -- 0x6
+        ST 0x2 -- 0x7
+        MOV R1, R0 -- 0x8
+        JE inicio -- 0x9
+fin:    JMP inicio -- 0xA
+
+01000010 00010100 01000011 00000001 01111010 01010010 00010100 01100010 10000010
+
+-- Ejercicio 2 --
+PC tiene 4 bits de tamaño
+R0..R3 tienen 8 bytes de tamaño
+El bus interno tiene 8 bits de tamaño
+El PC esta conectadoo a los 4 bits menos significativos del bus
+Todos los registros son de 8 bits menos ADDR
+EXT_IN es de 4 bits
+EXT_OUT es de 8 bits
+
+ADDR := PC
+MEM_READ
+IR = RD_DATA
+EXT_IN := PC
+EXT
+INC_IN := EXT_OUT 
+INC
+PC := INC_OUT
+
+ALU_IN1 := R1
+ALU_IN2 := R2
+ALU_and
+R1 := ALU_OUT
+
+ADDR := IR[0:3]
+WRT_DATA := R0
+MEM_WRITE
+
+Agrego un comparador con 0 al datapath
+CMP_IN = R0
+if (CMP_OUT = 0) {
+    PC := IR[0:3]
+}
+

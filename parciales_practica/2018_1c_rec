@@ -1,0 +1,130 @@
+-- Parcial -- 
+https://www.cubawiki.com.ar/images/a/a9/Orga1_recu_1erCuatri2018.pdf
+----
+
+-- Ejercicio 1 --
+Tamaño maximo de memoria: 2^8*8 = 256bytes
+El tamaño del PC es: 8 bits
+
+0x82: 10000010 invalida
+0x00: 00000000 valida
+0x44: 01000100 valida
+0x7C: 01111100 invalida
+
+inicio: LOAD R0, R1 -- 0x33
+        NEG R1 -- 0x34
+        ADD R0, R1 -- 0x35
+        SKIP_z R2 -- 0x36
+        STORE R0, R3 -- 0x37
+        JMP R2 -- 0x38
+
+00100001 01010111 00000001 01101011 00110011 01111011
+0x21 0x57 0x01 0x6B 0x33 0x7B
+
+ADDR := PC
+MEM_READ
+IR := RD_DATA
+INC_IN := PC
+INC
+PC := INC_OUT
+
+-- Ejercicio 3 --
+EXP(L) = 0xFFF0
+ST(L) = 0xFFF1
+ENF(E) = 0xFFF2
+
+Estados:
+ESPERANDO --> 0x0000
+ENFRIANDO_1 --> 0x0001
+ENFRIANDO_2 --> 0x0002
+APAGADO --> 0x0003
+VACIO_0 --> 0x0004
+VACIO_1 --> 0x0005
+
+Registro de estados: R0
+
+ESTADO = APAGADO
+while(true) {
+    if (ESTADO = ENFRIANDO_1) {
+        POTENCIA = 0x0001
+    }
+    else if (ESTADO = ENFRIANDO_2) {
+        POTENCIA = 0x0002
+    }
+    if (ESTADO = APAGADO) {
+        POTENCIA = 0x0000
+    }
+    if (ESTADO = VACIO_0) {
+        POTENCIA = 0x0000
+    }
+    if (ESTADO = VACIO_1 {
+        POTENCIA = 0x0001
+    }
+    if (ESTADO = ESPERANDO) {
+        if (TEMP < 4) {
+            ESTADO = APAGADO
+        } else if (TEMP < 10) {
+            ESTADO = ENFRIANDO_2
+        } else {
+            ESTADO = ENFRIANDO_2
+        }
+    }
+}
+
+RAI
+if (CAPACIDAD = 0xF177) {
+    if (TEMP < 10) {
+        ESTADO = VACIO_0
+    } else {
+        ESTADO = VACIO_1
+    }
+} else {
+    ESTADO = ESPERANDO
+}
+IRET()
+
+            MOV R0, 0x0000
+ciclo:      CMP R0, 0x0001
+            JE enfrando1
+            CMP R0, 0x0002
+            JE enfriando2
+            CMP R0, 0x0003
+            JE apagado
+            CMP R0, 0x0004
+            JE vacio1
+            CMP R0, 0x0005
+            JE vacio2
+            CMP R0, 0x0000
+            JE esperando
+            JMP fin
+enfriando2: MOV [0xFFF2], 0x0002
+            MOV R0, 0x0000
+            JMP fin
+enfriando1: MOV [0xFFF2], 0x0002
+            MOV R0, 0x0000
+            JMP fin
+apagado:    MOV [0xFFF2], 0x0002
+            MOV R0, 0x0000
+            JMP fin
+vacio1:     MOV [0xFFF2], 0x0002
+            MOV R0, 0x0000
+            JMP fin
+vacio0:     MOV [0xFFF2], 0x0002
+            MOV R0, 0x0000
+            JMP fin
+esperando:  CMP [0xFFF1], 0x0004
+            JL setApagado
+            CMP [0xFFF1], 0x000A
+            JL setEnfriando1
+            MOV R0, 0x0002
+fin:        JMP ciclo
+
+rai
+            CMP [0xFFF0], 0xF177
+            JNE ret
+            CMP [0xFFF1], 0x000A
+            JL setVacio1
+            MOV R0, 0x0005
+setVacio1:  MOV R0, 0x0004
+ret:        IRET()
+
